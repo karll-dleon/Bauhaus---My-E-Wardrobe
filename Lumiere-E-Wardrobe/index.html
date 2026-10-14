@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauhaus | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="brand-header">
+                <h1>Bahaus</h1>
+                <p>Curate Your Signature Style.</p>
+            </div>
+            
+            <form id="loginForm" novalidate>
+                <div class="input-group">
+                    <label for="username">Stylist Username</label>
+                    <input type="text" id="username" placeholder="Enter your fashion alias" required>
+                    <span class="error-msg" id="userError"></span>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Access Code</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <span class="error-msg" id="passError"></span>
+                </div>
+
+                <button type="submit" class="btn-primary">Enter Wardrobe</button>
+                <p class="form-footer">We don't follow trends – we define them.</p>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

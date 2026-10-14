@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauhaus | My E-Wardrobe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="app-body">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>Bauhaus</h1>
+            <p id="userGreeting">Welcome, Stylist</p>
+        </div>
+        <ul class="nav-links">
+            <li><button class="nav-btn active" data-target="sec-dashboard">Dashboard</button></li>
+            <li><button class="nav-btn" data-target="sec-gallery">My Wardrobe Closet</button></li>
+            <li><button class="nav-btn" data-target="sec-add">Add New Piece</button></li>
+            <li><button class="nav-btn" data-target="sec-suggester">Style & Fit</button></li>
+            <li><button class="nav-btn" data-target="sec-profile">Stylist Profile</button></li>
+            <li><button class="nav-btn btn-logout" id="logoutBtn">Log Out</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Sections -->
+    <main class="content-area">
+        
+        <!-- Section 1: Dashboard with Extended KPIs -->
+        <section id="sec-dashboard" class="app-section active-sec">
+            <h2 class="section-title">Wardrobe Analytics</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h3>Total Pieces</h3>
+                    <p id="kpiTotal">0</p>
+                </div>
+                <div class="kpi-card">
+                    <h3>Top Category</h3>
+                    <p id="kpiCategory">-</p>
+                </div>
+                <div class="kpi-card">
+                    <h3>Primary Season</h3>
+                    <p id="kpiSeason">-</p>
+                </div>
+                <div class="kpi-card">
+                    <h3>Collection Score</h3>
+                    <p id="kpiScore">0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Wardrobe Closet & Popup Modal -->
+        <section id="sec-gallery" class="app-section">
+            <h2 class="section-title">Wardrobe Closet</h2>
+            <div class="wardrobe-cabinet-container">
+                <div class="wardrobe-closet">
+                    <div class="closet-header"><h3>CLICK ITEMS TO INSPECT</h3></div>
+                    <div id="closetInterior" class="closet-interior">
+                        <!-- JS injects closet items here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Details Popup Modal -->
+            <div id="itemModal" class="item-modal">
+                <div class="modal-content">
+                    <span id="modalClose" class="modal-close">&times;</span>
+                    <img id="modalImg" src="" alt="Piece Preview">
+                    <h3 id="modalName" style="font-size: 1.5rem; margin-bottom: 10px;"></h3>
+                    <p id="modalMeta" style="margin-bottom: 15px; font-weight: 600;"></p>
+                    <button id="modalDeleteBtn" class="btn-primary" style="background-color: var(--bh-red);">Discard Piece</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Add Piece with Image Upload -->
+        <section id="sec-add" class="app-section">
+            <h2 class="section-title">Curate & Upload Piece</h2>
+            <div class="form-card">
+                <form id="addPieceForm">
+                    <div class="input-group">
+                        <label for="itemName">Piece Name</label>
+                        <input type="text" id="itemName" placeholder="e.g., Leather Jacket" required>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="itemCategory">Category</label>
+                            <select id="itemCategory" required>
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="Tops">Tops</option>
+                                <option value="Bottoms">Bottoms</option>
+                                <option value="Outerwear">Outerwear</option>
+                                <option value="Shoes">Shoes</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="itemColor">Dominant Color</label>
+                            <input type="text" id="itemColor" placeholder="e.g., Primary Red" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="itemSeason">Season</label>
+                            <select id="itemSeason" required>
+                                <option value="" disabled selected>Select Season</option>
+                                <option value="Spring">Spring</option>
+                                <option value="Summer">Summer</option>
+                                <option value="Fall">Fall</option>
+                                <option value="Winter">Winter</option>
+                                <option value="All Season">All Season</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label for="itemImageFile">Upload Photo from Device</label>
+                        <input type="file" id="itemImageFile" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-top: 15px;">Add to Wardrobe Closet</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Section 4: Style Suggester & 360 Mannequin -->
+        <section id="sec-suggester" class="app-section">
+            <h2 class="section-title">Outfit Suggester & Fitting</h2>
+            <div class="suggester-layout">
+                <div class="suggester-card">
+                    <h3 style="margin-bottom: 15px; font-weight: 900; text-transform: uppercase;">Event Details</h3>
+                    <form id="suggesterForm">
+                        <div class="input-group">
+                            <label for="occInput">Occasion</label>
+                            <input type="text" id="occInput" placeholder="e.g., Gallery Opening, Tech Pitch" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="placeInput">Place / Venue</label>
+                            <input type="text" id="placeInput" placeholder="e.g., Museum of Modern Art" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Generate Complete Fit</button>
+                    </form>
+                    <div id="suggestionText" style="margin-top: 20px; font-weight: 600; font-size: 0.95rem;"></div>
+                </div>
+
+                <!-- 360 Mannequin Display Stage with Arms & Non-overlapping Labels -->
+                <div class="mannequin-stage">
+                    <h4 style="margin-bottom: 10px; text-transform: uppercase; font-weight: 900;">Mannequin Display</h4>
+                    <div id="mannequinWrapper" class="mannequin-container">
+                        <div class="mannequin-head"></div>
+                        <div class="mannequin-torso-area">
+                            <div class="mannequin-arm left-arm"></div>
+                            <div id="mannequinTorso" class="mannequin-torso">
+                                <span id="layerTop" class="outfit-layer layer-top">Top: [None]</span>
+                            </div>
+                            <div class="mannequin-arm right-arm"></div>
+                        </div>
+                        <div class="mannequin-legs">
+                            <div class="mannequin-leg">
+                                <span id="layerBottom" class="outfit-layer layer-bottom">Bottom: [None]</span>
+                            </div>
+                            <div class="mannequin-leg"></div>
+                        </div>
+                        <div class="mannequin-shoes-area">
+                            <span id="layerShoes" class="outfit-layer layer-shoes">Shoes: [None]</span>
+                        </div>
+                    </div>
+                    <div class="rotate-controls">
+                        <button id="rotateLeft" class="btn-rotate">rotate ↺</button>
+                        <button id="rotateRight" class="btn-rotate">rotate ↻</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Extended Profile Details -->
+        <section id="sec-profile" class="app-section">
+            <h2 class="section-title">Stylist Profile & System Info</h2>
+            <div class="profile-card">
+                <h3 id="profileName" style="font-size: 1.8rem; font-weight: 900; color: var(--bh-blue);">Stylist Name</h3>
+                <div class="profile-details-grid">
+                    <div class="profile-item">
+                        <label>Session Login Time</label>
+                        <span id="profLogin">--</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Design Archetype</label>
+                        <span>Bauhaus Functionalist</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Registered Items</label>
+                        <span id="profCount">0 Pieces</span>
+                    </div>
+                    <div class="profile-item">
+                        <label>Local Storage Status</label>
+                        <span style="color: green;">Active & Synchronized</span>
+                    </div>
+                </div>
+                <button id="clearDataBtn" class="btn-danger">Wipe Local Storage Data</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="wardrobe.js"></script>
+</body>
+</html>
