@@ -1,5 +1,5 @@
 /**
- * LUMIÈRE E-WARDROBE: DAY 1 - AUTHENTICATION MODULE
+ * BAUHAUS E-WARDROBE: DAY 1 - AUTHENTICATION MODULE
  * Concepts Implemented: JS DOM Manipulation, JS Login Form, Data Handling (Local Storage)
  */
 
