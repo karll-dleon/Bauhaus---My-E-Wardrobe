@@ -1,17 +1,21 @@
 /**
  * BAUHAUS: THE E-WARDROBE 
+ * Concepts: User-scoped local storage data isolation, Weather API fetch, 360 Mannequin mapping.
  */
 
-// 1. Session Security Check
+// 1. Session Security Check & Account Data Scoping
 const sessionData = localStorage.getItem('lumiere_active_session');
 if (!sessionData) {
     window.location.href = 'index.html';
-} else {
-    const user = JSON.parse(sessionData);
-    document.getElementById('userGreeting').textContent = `Welcome, ${user.username}`;
-    document.getElementById('profileName').textContent = `Stylist: ${user.username}`;
-    document.getElementById('profLogin').textContent = new Date(user.loginTime).toLocaleString();
 }
+
+const user = JSON.parse(sessionData);
+document.getElementById('userGreeting').textContent = `Welcome, ${user.username}`;
+document.getElementById('profileName').textContent = `Stylist: ${user.username}`;
+document.getElementById('profLogin').textContent = new Date(user.loginTime).toLocaleString();
+
+// Dynamic Storage Key: Ensures Account A and Account B have completely independent wardrobes
+const userStorageKey = `lumiere_wardrobe_${user.username.toLowerCase()}`;
 
 // 2. OOP Blueprint
 class WardrobeItem {
@@ -26,21 +30,23 @@ class WardrobeItem {
     }
 }
 
-// 3. Array Data Store & Persistence
+// 3. Array Data Store & User-Scoped Persistence
 let wardrobeCollection = [];
 let currentOpenId = null;
 
 function loadWardrobeData() {
-    const saved = localStorage.getItem('lumiere_wardrobe');
+    const saved = localStorage.getItem(userStorageKey);
     if (saved) {
         const parsed = JSON.parse(saved);
         wardrobeCollection = parsed.map(i => new WardrobeItem(i.id, i.name, i.category, i.color, i.season, i.image));
+    } else {
+        wardrobeCollection = []; // Brand new accounts start with an empty wardrobe
     }
     updateDashboardKPIs();
 }
 
 function saveWardrobeData() {
-    localStorage.setItem('lumiere_wardrobe', JSON.stringify(wardrobeCollection));
+    localStorage.setItem(userStorageKey, JSON.stringify(wardrobeCollection));
     updateDashboardKPIs();
 }
 
@@ -64,7 +70,7 @@ function updateDashboardKPIs() {
     }
 }
 
-// 5. Wardrobe Closet Rendering & Modal
+// 5. Interactive Wardrobe Closet Rendering & Modal
 const closetInterior = document.getElementById('closetInterior');
 const itemModal = document.getElementById('itemModal');
 const modalClose = document.getElementById('modalClose');
@@ -168,7 +174,6 @@ suggesterForm.addEventListener('submit', async (e) => {
     suggestionText.innerHTML = "Consulting live weather API & curating fit...";
 
     try {
-        // Fetch live weather data to determine season context
         const weatherRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=14.75&longitude=120.94&current_weather=true');
         const weatherData = await weatherRes.json();
         const temp = weatherData.current_weather.temperature;
@@ -178,7 +183,6 @@ suggesterForm.addEventListener('submit', async (e) => {
         else if (temp < 20) seasonContext = 'Winter';
         else seasonContext = 'Spring';
 
-        // Filter valid pieces matching weather or all season
         const availableItems = wardrobeCollection.filter(i => i.season === seasonContext || i.season === 'All Season');
         const pool = availableItems.length > 0 ? availableItems : wardrobeCollection;
 
@@ -197,8 +201,7 @@ suggesterForm.addEventListener('submit', async (e) => {
         document.getElementById('layerShoes').textContent = shoePick ? `Shoes: ${shoePick.name}` : 'Shoes: [None]';
 
     } catch (err) {
-        suggestionText.innerHTML = `<span style="color:var(--bh-red);">Weather API sync failed. Curating from local collection...</span>`;
-        // Fallback random selection if network fails
+        suggestionText.innerHTML = `<span style="color:var(--bh-red);">Weather API sync failed. Curating from collection...</span>`;
         const tops = wardrobeCollection.filter(i => i.category === 'Tops' || i.category === 'Dresses' || i.category === 'Outerwear');
         const bottoms = wardrobeCollection.filter(i => i.category === 'Bottoms');
         const shoes = wardrobeCollection.filter(i => i.category === 'Shoes');
@@ -215,7 +218,7 @@ suggesterForm.addEventListener('submit', async (e) => {
 
 // 8. Profile Clear Data & Navigation SPA Switcher
 document.getElementById('clearDataBtn').addEventListener('click', () => {
-    if (confirm("Wipe local storage wardrobe collection?")) {
+    if (confirm("Wipe this stylist's wardrobe collection?")) {
         wardrobeCollection = [];
         saveWardrobeData();
         renderCloset();
@@ -227,10 +230,14 @@ const navButtons = document.querySelectorAll('.nav-btn:not(.btn-logout)');
 const sections = document.querySelectorAll('.app-section');
 navButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-        navButtons.forEach(b => b.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active-sec'));
-        btn.classList.add('active');
-        document.getElementById(btn.getAttribute('data-target')).classList.add('active-sec');
+        const targetId = btn.getAttribute('data-target');
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+            navButtons.forEach(b => b.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active-sec'));
+            btn.classList.add('active');
+            targetSection.classList.add('active-sec');
+        }
     });
 });
 
