@@ -2,16 +2,24 @@
  * BAUHAUS: THE E-WARDROBE 
  */
 
-// 1. Session Security Check
-const sessionData = localStorage.getItem('lumiere_active_session');
-if (!sessionData) {
-    window.location.href = 'index.html';
-} else {
-    const user = JSON.parse(sessionData);
-    document.getElementById('userGreeting').textContent = `Welcome, ${user.username}`;
-    document.getElementById('profileName').textContent = `Stylist: ${user.username}`;
-    document.getElementById('profLogin').textContent = new Date(user.loginTime).toLocaleString();
-}
+// --- SPA NAVIGATION & INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Session Security Check
+    const sessionData = localStorage.getItem('lumiere_active_session');
+    if (!sessionData) {
+        window.location.href = 'index.html';
+        return;
+    } else {
+        const user = JSON.parse(sessionData);
+        const greetingEl = document.getElementById('userGreeting');
+        const profileNameEl = document.getElementById('profileName');
+        const profLoginEl = document.getElementById('profLogin');
+
+        if (greetingEl) greetingEl.textContent = `Welcome, ${user.username}`;
+        if (profileNameEl) profileNameEl.textContent = `Stylist: ${user.username}`;
+        if (profLoginEl) profLoginEl.textContent = new Date(user.loginTime).toLocaleString();
+    }
 
 // 1.2. User-Specific Storage Key
 // This ensures Account A's wardrobe items never bleed over into Account B's dashboard
@@ -249,14 +257,23 @@ document.getElementById('clearDataBtn').addEventListener('click', () => {
 
 const navButtons = document.querySelectorAll('.nav-btn:not(.btn-logout)');
 const sections = document.querySelectorAll('.app-section');
-navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        navButtons.forEach(b => b.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active-sec'));
-        btn.classList.add('active');
-        document.getElementById(btn.getAttribute('data-target')).classList.add('active-sec');
+
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const targetSection = document.getElementById(targetId);
+
+            if (targetSection) {
+                // Remove active classes from all buttons and sections
+                navButtons.forEach(b => b.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active-sec'));
+
+                // Add active class to clicked button and target section
+                btn.classList.add('active');
+                targetSection.classList.add('active-sec');
+            }
+        });
     });
-});
 
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
@@ -272,3 +289,4 @@ if (logoutBtn) {
 // Initialize on load
 loadWardrobeData();
 renderCloset();
+});
