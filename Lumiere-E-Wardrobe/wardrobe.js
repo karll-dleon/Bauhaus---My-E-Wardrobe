@@ -258,10 +258,16 @@ navButtons.forEach(btn => {
     });
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('lumiere_active_session');
-    window.location.href = 'index.html';
-});
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        // Destroy the active session token
+        localStorage.removeItem('lumiere_active_session');
+        
+        // Redirect back to login
+        window.location.href = 'index.html';
+    });
+}
 
 // Initialize on load
 loadWardrobeData();
