@@ -13,6 +13,30 @@ if (!sessionData) {
     document.getElementById('profLogin').textContent = new Date(user.loginTime).toLocaleString();
 }
 
+// 1.2. User-Specific Storage Key
+// This ensures Account A's wardrobe items never bleed over into Account B's dashboard
+const userStorageKey = `lumiere_wardrobe_${user.username.toLowerCase()}`;
+
+let wardrobeCollection = [];
+
+function loadWardrobeData() {
+    // Load data specific to THIS logged-in user
+    const saved = localStorage.getItem(userStorageKey);
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        wardrobeCollection = parsed.map(i => new WardrobeItem(i.id, i.name, i.category, i.color, i.season, i.image));
+    } else {
+        wardrobeCollection = []; // Empty collection for new accounts
+    }
+    updateDashboardKPIs();
+}
+
+function saveWardrobeData() {
+    // Save data specific to THIS logged-in user
+    localStorage.setItem(userStorageKey, JSON.stringify(wardrobeCollection));
+    updateDashboardKPIs();
+}
+
 // 2. OOP Blueprint
 class WardrobeItem {
     constructor(id, name, category, color, season, image) {
