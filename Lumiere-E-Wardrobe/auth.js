@@ -42,6 +42,9 @@ loginForm.addEventListener('submit', function(event) {
 
     // 4. Data Handling via Local Storage
     if (isValid) {
+        // CLEAR any stale/existing active session first to prevent account crossover bugs
+        localStorage.removeItem('lumiere_active_session');
+
         // Create a user session object
         const activeUser = {
             username: username,
@@ -57,7 +60,7 @@ loginForm.addEventListener('submit', function(event) {
         btn.style.backgroundColor = 'var(--leather)'; // Temporary state color
 
         setTimeout(() => {
-            // Redirect to the main application dashboard (To be built on Day 2)
+            // Redirect to the main application dashboard
             window.location.href = 'app.html'; 
         }, 1200);
     }
