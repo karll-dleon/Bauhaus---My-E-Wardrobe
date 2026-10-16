@@ -2,47 +2,15 @@
  * BAUHAUS: THE E-WARDROBE 
  */
 
-// --- SPA NAVIGATION & INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // 1. Session Security Check
-    const sessionData = localStorage.getItem('lumiere_active_session');
-    if (!sessionData) {
-        window.location.href = 'index.html';
-        return;
-    } else {
-        const user = JSON.parse(sessionData);
-        const greetingEl = document.getElementById('userGreeting');
-        const profileNameEl = document.getElementById('profileName');
-        const profLoginEl = document.getElementById('profLogin');
-
-        if (greetingEl) greetingEl.textContent = `Welcome, ${user.username}`;
-        if (profileNameEl) profileNameEl.textContent = `Stylist: ${user.username}`;
-        if (profLoginEl) profLoginEl.textContent = new Date(user.loginTime).toLocaleString();
-    }
-
-// 1.2. User-Specific Storage Key
-// This ensures Account A's wardrobe items never bleed over into Account B's dashboard
-const userStorageKey = `lumiere_wardrobe_${user.username.toLowerCase()}`;
-
-let wardrobeCollection = [];
-
-function loadWardrobeData() {
-    // Load data specific to THIS logged-in user
-    const saved = localStorage.getItem(userStorageKey);
-    if (saved) {
-        const parsed = JSON.parse(saved);
-        wardrobeCollection = parsed.map(i => new WardrobeItem(i.id, i.name, i.category, i.color, i.season, i.image));
-    } else {
-        wardrobeCollection = []; // Empty collection for new accounts
-    }
-    updateDashboardKPIs();
-}
-
-function saveWardrobeData() {
-    // Save data specific to THIS logged-in user
-    localStorage.setItem(userStorageKey, JSON.stringify(wardrobeCollection));
-    updateDashboardKPIs();
+// 1. Session Security Check
+const sessionData = localStorage.getItem('lumiere_active_session');
+if (!sessionData) {
+    window.location.href = 'index.html';
+} else {
+    const user = JSON.parse(sessionData);
+    document.getElementById('userGreeting').textContent = `Welcome, ${user.username}`;
+    document.getElementById('profileName').textContent = `Stylist: ${user.username}`;
+    document.getElementById('profLogin').textContent = new Date(user.loginTime).toLocaleString();
 }
 
 // 2. OOP Blueprint
@@ -257,36 +225,20 @@ document.getElementById('clearDataBtn').addEventListener('click', () => {
 
 const navButtons = document.querySelectorAll('.nav-btn:not(.btn-logout)');
 const sections = document.querySelectorAll('.app-section');
-
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            const targetSection = document.getElementById(targetId);
-
-            if (targetSection) {
-                // Remove active classes from all buttons and sections
-                navButtons.forEach(b => b.classList.remove('active'));
-                sections.forEach(s => s.classList.remove('active-sec'));
-
-                // Add active class to clicked button and target section
-                btn.classList.add('active');
-                targetSection.classList.add('active-sec');
-            }
-        });
+navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active-sec'));
+        btn.classList.add('active');
+        document.getElementById(btn.getAttribute('data-target')).classList.add('active-sec');
     });
+});
 
-const logoutBtn = document.getElementById('logoutBtn');
-if (logoutBtn) {
-    logoutBtn.addEventListener('click', () => {
-        // Destroy the active session token
-        localStorage.removeItem('lumiere_active_session');
-        
-        // Redirect back to login
-        window.location.href = 'index.html';
-    });
-}
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('lumiere_active_session');
+    window.location.href = 'index.html';
+});
 
 // Initialize on load
 loadWardrobeData();
 renderCloset();
-});
