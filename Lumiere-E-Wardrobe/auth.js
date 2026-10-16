@@ -1,6 +1,6 @@
 /**
  * BAUHAUS E-WARDROBE: DAY 1 - AUTHENTICATION MODULE
- * Concepts Implemented: JS DOM Manipulation, JS Login Form, Data Handling (Local Storage)
+ * Concepts Implemented: JS DOM Manipulation, JS Login Form, Data Handling (Local Storage), JS Validation (Username text strings, Access Code numbers only), Session Handling
  */
 
 // 1. DOM Element Selection
@@ -10,9 +10,8 @@ const passwordInput = document.getElementById('password');
 const userError = document.getElementById('userError');
 const passError = document.getElementById('passError');
 
-// 2. Form Event Listener (Handling the Login action)
+// 2. Form Event Listener (Handling Login & Validation)
 loginForm.addEventListener('submit', function(event) {
-    // Prevent the default form submission to handle logic entirely via JavaScript
     event.preventDefault();
     
     // Reset error messages on new submission
@@ -23,7 +22,7 @@ loginForm.addEventListener('submit', function(event) {
     const password = passwordInput.value.trim();
     let isValid = true;
 
-    // 3. Form validation
+    // 3. Username Validation: Must be a valid string / characters (min 3 chars)
     if (username === '') {
         userError.textContent = 'Please enter your fashion alias.';
         isValid = false;
@@ -32,35 +31,40 @@ loginForm.addEventListener('submit', function(event) {
         isValid = false;
     }
 
+    // 4. Access Code Validation: Must be numbers only
+    const numbersOnlyRegex = /^\d+$/;
     if (password === '') {
-        passError.textContent = 'Please enter your password.';
+        passError.textContent = 'Please enter your access code.';
         isValid = false;
-    } else if (password.length < 5) {
-        passError.textContent = 'Password must be at least 5 characters.';
+    } else if (!numbersOnlyRegex.test(password)) {
+        passError.textContent = 'Access code must contain numbers only.';
+        isValid = false;
+    } else if (password.length < 4) {
+        passError.textContent = 'Access code must be at least 4 digits.';
         isValid = false;
     }
 
-    // 4. Data Handling via Local Storage
+    // 5. Secure Data Handling & Session Reset
     if (isValid) {
-        // CLEAR any stale/existing active session first to prevent account crossover bugs
+        // Clear any previous active session so different accounts never cross over
         localStorage.removeItem('lumiere_active_session');
 
-        // Create a user session object
+        // Create a fresh user session object
         const activeUser = {
             username: username,
             loginTime: new Date().toISOString()
         };
 
-        // Save session to Local Storage (converts JS Object to JSON string)
+        // Save session to Local Storage
         localStorage.setItem('lumiere_active_session', JSON.stringify(activeUser));
 
-        // Simulated asynchronous loading feel before redirecting
+        // Simulated asynchronous loading state before redirect
         const btn = document.querySelector('.btn-primary');
         btn.textContent = 'Unlocking Wardrobe...';
-        btn.style.backgroundColor = 'var(--leather)'; // Temporary state color
+        btn.style.backgroundColor = 'var(--bh-yellow)';
+        btn.style.color = 'var(--bh-black)';
 
         setTimeout(() => {
-            // Redirect to the main application dashboard
             window.location.href = 'app.html'; 
         }, 1200);
     }
